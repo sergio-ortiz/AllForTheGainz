@@ -1,23 +1,24 @@
-import { supabase } from "../lib/supabaseClient";
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import Account from "../components/account";
 
-function Page({ workouts }) {
+function Page() {
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
   return (
-    <ul>
-      {workouts.map((workout) => (
-        <li key={workout.id}>{workout.name}</li>
-      ))}
-    </ul>
+    <div className="container" style={{ padding: "50px 0 100px 0" }}>
+      {!session ? (
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          theme="light"
+        />
+      ) : (
+        <Account session={session} />
+      )}
+    </div>
   );
-}
-
-export async function getServerSideProps() {
-  let { data } = await supabase.from("workouts").select();
-
-  return {
-    props: {
-      workouts: data,
-    },
-  };
 }
 
 export default Page;
