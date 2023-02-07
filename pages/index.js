@@ -1,24 +1,41 @@
+import React from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import Account from "../components/account";
+import { supabase } from "../lib/supabaseClient";
+import Workout from "../components/workout.js";
 
-function Page() {
-  const session = useSession();
-  const supabase = useSupabaseClient();
+class Page extends React.Component {
+  constructor() {
+    super();
+    this.state = { session: null };
+  }
 
-  return (
-    <div className="container" style={{ padding: "50px 0 100px 0" }}>
-      {!session ? (
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          theme="light"
-        />
-      ) : (
-        <Account session={session} />
-      )}
-    </div>
-  );
+  componentDidMount() {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      this.setState({ session });
+    });
+  }
+
+  componentDidUpdate() {
+    supabase.auth.onAuthStateChange((_event, session) => {
+      this.setState({ session });
+    });
+  }
+
+  render() {
+    return (
+      <div className="container" style={{ padding: "50px 0 100px 0" }}>
+        {!this.state.session ? (
+          <Auth
+            supabaseClient={supabase}
+            appearance={{ theme: ThemeSupa }}
+            theme="light"
+          />
+        ) : (
+          <Workout session={this.state.session} />
+        )}
+      </div>
+    );
+  }
 }
 
 export default Page;
