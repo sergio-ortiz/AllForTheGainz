@@ -2,7 +2,7 @@ import React from "react";
 import { supabase } from "../lib/supabaseClient";
 import Exercise from "./exercise";
 
-export default class Account extends React.Component {
+export default class Workout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,7 +20,7 @@ export default class Account extends React.Component {
       const { user } = this.props.session;
 
       let { data, error, status } = await supabase
-        .from("leg_day")
+        .from(this.props.workout)
         .select()
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
@@ -56,7 +56,7 @@ export default class Account extends React.Component {
         .filter(([k, v]) => /\d/.test(k))
         .forEach(([k, v]) => (updates[k] = v));
 
-      let { error } = await supabase.from("leg_day").upsert(updates);
+      let { error } = await supabase.from(this.props.workout).upsert(updates);
 
       if (error) {
         throw error;
@@ -70,9 +70,7 @@ export default class Account extends React.Component {
 
   handler = (e, k) => {
     const update = {};
-
     update[k] = e.target.value;
-
     this.setState(update);
   };
 
@@ -98,6 +96,13 @@ export default class Account extends React.Component {
             </div>
           </form>
         )}
+        <button
+          value={null}
+          className="button block"
+          onClick={(e) => this.props.handler(e)}
+        >
+          Back
+        </button>
         <button
           type="button"
           className="button block"

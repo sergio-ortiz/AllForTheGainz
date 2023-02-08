@@ -1,7 +1,7 @@
 import React from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { supabase } from "../lib/supabaseClient";
-import Workout from "../components/workout.js";
+import WorkoutSelect from "../components/workout-select.js";
 
 class Page extends React.Component {
   constructor() {
@@ -31,7 +31,7 @@ class Page extends React.Component {
             theme="light"
           />
         ) : (
-          <Workout session={this.state.session} />
+          <WorkoutSelect session={this.state.session} />
         )}
       </div>
     );
